@@ -1,3 +1,14 @@
+## Quick start – How to use this with an LLM
+
+1. Open the file `Protocol_DCQN_LLM_Prompt_V1.txt`.
+2. Copy the **entire** content into a fresh LLM chat (one message, copy–paste–enter).
+3. If the model cannot load the JSON from the repository, paste the content of `DCQN_LLM_Protocol.json`
+   directly into the chat (in a separate message).
+4. When the model replies with `STATUS_STEP1 = NEIN_DOI_ZUGRIFF`, upload the original DCQN.MATRIX PDF
+   (OSF DOI: `10.17605/OSF.IO/QWA6S`) or provide full chapter excerpts.
+5. After `STATUS_STEP2 = JA_VOLLTEXT_GELESEN`, the model will reconstruct and activate
+   `DCQN_LOGIK_SESSION_V1` as primary reasoning logic for the session.
+
 # DCQN-Matrix-Axiomatik-LLM-Protocol
 
 A strict, deterministic LLM protocol for loading, reading and activating the DCQN.MATRIX Axiomatics from the original PDF (OSF DOI: 10.17605/OSF.IO/QWA6S).  
