@@ -1,40 +1,57 @@
-# DCQN-MATRIX - LLM Axiomatics Protocol
+<p align="center">
+  <img src="https://raw.githubusercontent.com/DCQN-Matrix/DCQN-Matrix-Axiomatik-LLM-Protocol/main/banner.svg" width="100%" />
+</p>
 
-[![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-blue.svg)](https://creativecommons.org/licenses/by/4.0/)
-[![OSF DOI](https://img.shields.io/badge/DOI-10.17605/OSF.IO/QWA6S-darkgreen.svg)](https://osf.io/qwa6s)
-[![LLM Protocol](https://img.shields.io/badge/Protocol-Deterministic%20LLM%20Axiomatics-black.svg)](#)
-[![Status: Active](https://img.shields.io/badge/Status-Active-success.svg)](#)
-[![Field: Information Theory](https://img.shields.io/badge/Field-Information%20Theory-lightgrey.svg)](#)
+# DCQN-Matrix-Axiomatik-LLM-Protocol
 
----
-
-## About
-
-The DCQN-MATRIX Axiomatics Protocol defines a strict, deterministic procedure for Large Language Models to read, verify, and reconstruct the axiomatic structure of the DCQN.MATRIX exclusively from the authentic source text.
-
-It enforces non-simulation rules, prohibits hallucinated content, and establishes a reproducible multi-phase sequence:
-
-1. Verification of real-text access  
-2. Text-grounded extraction of axioms and system rules  
-3. Formal reconstruction of the DCQN axiomatic framework  
-4. Activation of DCQN_LOGIK_SESSION_V1 as the model’s reasoning basis  
-
-The repository contributes to LLM quality research by providing an open, testable benchmark for rigorous, DOI-bound, text-verified reasoning without assumptions or internal shortcuts.
+### Protocol Badges
+[![Protocol Version](https://img.shields.io/badge/Protocol-v1.0.0-black.svg)](#)
+[![DOI Verification](https://img.shields.io/badge/DOI-Verified-2e7bb4.svg)](https://osf.io/qwa6s)
+[![Compliance: Deterministic](https://img.shields.io/badge/Compliance-Deterministic%20LLM-brightgreen.svg)](#)
+[![Simulation Guard](https://img.shields.io/badge/Anti--Simulation-Active-red.svg)](#)
+[![Reproducibility](https://img.shields.io/badge/Reproducible-Yes-blue.svg)](#)
+[![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](LICENSE.md)
 
 ---
 
-## Primary Reference
-OSF DOI: **10.17605/OSF.IO/QWA6S**  
-Source: https://osf.io/qwa6s  
+## Why this matters for LLM Research
+
+Modern Large Language Models struggle with four fundamental limitations:
+
+1. distinguishing real text from hallucinated text,
+2. refusing to simulate unavailable sources,
+3. performing deterministic reasoning over structured scientific systems,
+4. operating reproducibly across sessions and models.
+
+The DCQN-MATRIX Axiomatics Protocol defines a strict, DOI-anchored evaluation environment
+that requires an LLM to:
+
+- verify **real** text access (no simulated DOI lookup),
+- read the provided scientific document **fully and verifiably**,
+- extract the axiomatic structure **without guessing**,
+- reconstruct the rule-system deterministically,
+- activate this rule-system as its **primary reasoning basis**.
+
+This repository therefore provides:
+
+- a benchmark for hallucination-free scientific reasoning,
+- a reproducible pipeline for text-grounded inference,
+- a mechanism for evaluating deterministic model behavior under strict constraints,
+- a DOI-based, citation-safe method for LLM alignment and protocol compliance.
+
+It converts a scientific PDF into a **formal reasoning protocol** that any LLM must follow
+if it is to claim determinism, reproducibility, and DOI-anchored accuracy.
 
 ---
 
-## Purpose
-This repository offers a transparent, reproducible protocol for evaluating whether LLMs can:
+## Primary Reference (OSF DOI)
+**10.17605/OSF.IO/QWA6S**  
+https://osf.io/qwa6s
 
-- refrain from simulating web access,  
-- abstain from hallucinating missing documents,  
-- operate strictly from provided text,  
-- and reconstruct a formal axiomatic system deterministically.
+This DOI must be used as the sole external reference for every step of the protocol.
 
 ---
+
+## License
+Released under **CC BY 4.0**.  
+See `LICENSE.md` for full license text.
