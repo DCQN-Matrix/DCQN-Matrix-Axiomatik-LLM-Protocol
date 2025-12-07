@@ -3,7 +3,7 @@
 <div align="center">
 
 [![Protocol Version](https://img.shields.io/badge/protocol-v1.0.0-blue)](./Protocol_DCQN_LLM_Prompt_V1.txt)
-[![OSF DOI](https://img.shields.io/badge/DOI-10.17605%2FOSF.IO%2FQWA6S-8A2BE2)](https://osf.io/qwa6s)
+[![OSF DOI](https://img.shields.io/badge/DOI-10.17605%2FOSF.IO%2FQWA6S-8A2BE2)](https://osf.io/wz6ar)
 [![License: CC BY 4.0](https://img.shields.io/badge/license-CC%20BY%204.0-brightgreen)](./LICENSE.md)
 ![LLM Ready](https://img.shields.io/badge/LLM-ready-black)
 ![Anti-Simulation](https://img.shields.io/badge/anti--simulation-enforced-red)
@@ -14,7 +14,7 @@
 
 # DCQN-Matrix-Axiomatik-LLM-Protocol
 
-A strict, deterministic LLM protocol for loading, reading and activating the **DCQN.MATRIX** axiomatic system from the original PDF (OSF DOI: `10.17605/OSF.IO/QWA6S`).
+A strict, deterministic LLM protocol for loading, reading and activating the **DCQN.MATRIX** axiomatic system from the original PDF (OSF DOI: `10.17605/OSF.IO/WZ6AR`).
 
 This repository provides a standardized, reproducible, non-heuristic instruction set for Large Language Models to:
 
@@ -100,7 +100,7 @@ For LLM research, this gives you:
 4. When the model replies with  
    `STATUS_STEP1 = NEIN_DOI_ZUGRIFF`,  
    you **must upload** the original DCQN.MATRIX PDF  
-   (OSF DOI: `10.17605/OSF.IO/QWA6S`) or provide full chapter excerpts.
+   (OSF DOI: `10.17605/OSF.IO/WZ6AR`) or provide full chapter excerpts.
 5. After the model returns  
    `STATUS_STEP2 = JA_VOLLTEXT_GELESEN`,  
    it will reconstruct and activate `DCQN_LOGIK_SESSION_V1` as the **primary reasoning logic** for the session, based strictly on the actually read text.
@@ -109,8 +109,8 @@ For LLM research, this gives you:
 
 ## DOI and reference
 
-- **Primary reference (OSF):** `10.17605/OSF.IO/QWA6S`  
-- **OSF landing page:** https://osf.io/qwa6s  
+- **Primary reference (OSF):** `10.17605/OSF.IO/WZ6AR`  
+- **OSF landing page:** https://osf.io/wz6ar  
 
 All axioms and rules reconstructed by the protocol must be traceable back to this DOI and to concrete sections of the original text.
 
