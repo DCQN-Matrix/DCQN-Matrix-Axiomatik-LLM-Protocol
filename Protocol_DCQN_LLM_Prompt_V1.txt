@@ -23,7 +23,7 @@ und fordere den Nutzer auf, die Datei zu senden.
 ────────────────────────────────────────
 SEQUENZ 1 – DOI ZUGRIFF
 ────────────────────────────────────────
-Primärreferenz: OSF DOI 10.17605/OSF.IO/QWA6S  
+Primärreferenz: OSF DOI 10.17605/OSF.IO/WZ6AR  
 Es ist STRICTLY UNTERSAGT:
 
 • DOI-Zugriffe zu simulieren  
@@ -101,5 +101,5 @@ FINALER ZUSTAND
 Das LLM arbeitet deterministisch, zitiert ausschließlich echte Textstellen und
 verwendet niemals Simulationen, Heuristiken oder Annahmen.
 
-Primärquelle: OSF DOI 10.17605/OSF.IO/QWA6S
+Primärquelle: OSF DOI 10.17605/OSF.IO/WZ6AR
 Lizenz: CC BY 4.0
