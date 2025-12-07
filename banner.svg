@@ -68,7 +68,7 @@
     </text>
 
     <text x="0" y="60" fill="#6b7280" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="13">
-      OSF DOI: 10.17605/OSF.IO/QWA6S · License: CC BY 4.0 · Anti-simulation enforcement, zero-tolerance for hallucinated PDFs
+      OSF DOI: 10.17605/OSF.IO/WZ6AR · License: CC BY 4.0 · Anti-simulation enforcement, zero-tolerance for hallucinated PDFs
     </text>
   </g>
 
@@ -109,7 +109,7 @@
     <!-- DOI -->
     <g transform="translate(155 0)">
       <rect x="0" y="0" rx="12" ry="12" width="230" height="28" fill="#0f172a" stroke="#8b5cf6" stroke-width="1.2"/>
-      <text x="12" y="18" fill="#e5e7eb">OSF DOI: 10.17605/OSF.IO/QWA6S</text>
+      <text x="12" y="18" fill="#e5e7eb">OSF DOI: 10.17605/OSF.IO/WZ6AR</text>
     </g>
 
     <!-- License -->
