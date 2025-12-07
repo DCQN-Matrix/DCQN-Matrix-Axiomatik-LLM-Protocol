@@ -3,7 +3,7 @@
 <div align="center">
 
 [![Protocol Version](https://img.shields.io/badge/protocol-v1.0.0-blue)](./Protocol_DCQN_LLM_Prompt_V1.txt)
-[![OSF DOI](https://img.shields.io/badge/DOI-10.17605%2FOSF.IO%2FQWA6S-8A2BE2)](https://doi.org/10.17605/OSF.IO/QWA6S)
+[![OSF DOI](https://img.shields.io/badge/DOI-10.17605%2FOSF.IO%2FQWA6S-8A2BE2)](https://doi.org/10.17605/OSF.IO/WZ6AR)
 [![License: CC BY 4.0](https://img.shields.io/badge/license-CC%20BY%204.0-brightgreen)](./LICENSE.md)
 ![LLM Ready](https://img.shields.io/badge/LLM-ready-black)
 ![Anti-Simulation](https://img.shields.io/badge/anti--simulation-enforced-red)
