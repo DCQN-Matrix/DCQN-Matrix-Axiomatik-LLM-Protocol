@@ -1,3 +1,22 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/DCQN-Matrix/DCQN-Matrix-Axiomatik-LLM-Protocol/main/banner.svg" 
+       alt="DCQN-MATRIX – Deterministic Axiomatics Protocol for LLMs" 
+       width="100%">
+</p>
+
+<h2 align="center">DCQN-MATRIX — Deterministic Axiomatics Protocol for LLMs</h2>
+
+<p align="center">
+  <strong>Real-text verification • Zero hallucination • Reproducible LLM reasoning</strong>
+</p>
+
+<p align="center">
+  <a href="https://osf.io/qwa6s"><img src="https://img.shields.io/badge/DOI-10.17605%2FOSF.IO%2FQWA6S-blue.svg"></a>
+  <img src="https://img.shields.io/badge/Protocol-Deterministic-orange.svg">
+  <img src="https://img.shields.io/badge/LLM-Evaluation-green.svg">
+  <img src="https://img.shields.io/badge/State-Machine_Logic-black.svg">
+</p>
+
 DCQN.MATRIX – Axiomatik-Übernahme-Prompt (OSF-Version)
 
 OBLIGATORISCHE ANWEISUNG:
