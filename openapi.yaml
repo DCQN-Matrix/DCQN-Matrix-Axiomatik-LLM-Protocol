@@ -1,320 +1,479 @@
-from typing import List, Dict, Optional
-from fastapi import FastAPI, HTTPException, Path
-from pydantic import BaseModel
-import uuid
-
-app = FastAPI(title="DCQN MATRIX – LLM Axiomatik Protocol API", version="1.0.0")
-
-
-# -----------------------------
-# Pydantic-Modelle (Schema-Mapping)
-# -----------------------------
-
-class OsfRecord(BaseModel):
-    doi: str
-    url: str
-    title: str
-    license: str
-    author: str
-    publication_date: str  # ISO-Date (YYYY-MM-DD)
-
-
-class SessionCreateRequest(BaseModel):
-    client_id: Optional[str] = None
-    osf_record: OsfRecord
-
-
-class SessionCreateResponse(BaseModel):
-    session_id: str
-    status_step1: str  # JA_DOI_ZUGRIFF | NEIN_DOI_ZUGRIFF
-    status_step2: str  # JA_VOLLTEXT_GELESEN | NEIN_VOLLTEXT_UNVOLLSTÄNDIG
-
-
-class TextSegment(BaseModel):
-    id: str
-    text: str
-
-
-class FulltextUploadRequest(BaseModel):
-    mode: str  # pdf_base64 | text_segments
-    pdf_sha256: Optional[str] = None
-    pdf_base64: Optional[str] = None
-    segments: Optional[List[TextSegment]] = None
-
-
-class FulltextUploadResponse(BaseModel):
-    session_id: str
-    status_step1: str
-    status_step2: str
-
-
-class AnalyzeRequest(BaseModel):
-    required_checks: Optional[List[str]] = None
-
-
-class AnalyzeResponse(BaseModel):
-    session_id: str
-    status_step1: str
-    status_step2: str
-    checks: Dict[str, bool]
-    error: Optional[str] = None
-
-
-class SourceRef(BaseModel):
-    chapter: Optional[str] = None
-    section: Optional[str] = None
-
-
-class Axiom(BaseModel):
-    id: str
-    label: str
-    text: str
-    source_ref: SourceRef
-
-
-class Regel(BaseModel):
-    id: str
-    label: str
-    text: str
-    source_ref: SourceRef
-
-
-class Ebene(BaseModel):
-    code: str
-    symbol: str
-    name: str
-    role: str
-    order: int
-    source_ref: SourceRef
-
-
-class LogicSource(BaseModel):
-    osf_doi: str
-    osf_url: str
-    title: str
-    license: str
-    author: str
-
-
-class LogicSession(BaseModel):
-    version: str
-    source: LogicSource
-    dcqn_axiome: List[Axiom]
-    dcqn_regeln: List[Regel]
-    ebenen: List[Ebene]
-    activation_sentence: str
-
-
-class LogicResponse(BaseModel):
-    session_id: str
-    status_step1: str
-    status_step2: str
-    logic_session: LogicSession
-
-
-class StatusResponse(BaseModel):
-    session_id: str
-    status_step1: str
-    status_step2: str
-    logic_session_available: bool
-
-
-# -----------------------------
-# In-Memory-"Datenbank"
-# -----------------------------
-
-SESSIONS: Dict[str, Dict] = {}
-
-
-STATUS_STEP1_JA = "JA_DOI_ZUGRIFF"
-STATUS_STEP1_NEIN = "NEIN_DOI_ZUGRIFF"
-STATUS_STEP2_JA = "JA_VOLLTEXT_GELESEN"
-STATUS_STEP2_NEIN = "NEIN_VOLLTEXT_UNVOLLSTÄNDIG"
-
-
-# -----------------------------
-# Helper
-# -----------------------------
-
-def create_session_id() -> str:
-    return f"dcqn-{uuid.uuid4().hex[:8]}"
-
-
-# -----------------------------
-# Endpunkte
-# -----------------------------
-
-@app.post("/sessions", response_model=SessionCreateResponse, status_code=201)
-def create_session(payload: SessionCreateRequest):
-    session_id = create_session_id()
-    SESSIONS[session_id] = {
-        "osf_record": payload.osf_record.dict(),
-        "status_step1": STATUS_STEP1_NEIN,  # Noch kein Volltext
-        "status_step2": STATUS_STEP2_NEIN,
-        "fulltext": None,
-        "logic_session": None,
-    }
-    return SessionCreateResponse(
-        session_id=session_id,
-        status_step1=STATUS_STEP1_NEIN,
-        status_step2=STATUS_STEP2_NEIN,
-    )
-
-
-@app.post("/sessions/{session_id}/fulltext", response_model=FulltextUploadResponse)
-def upload_fulltext(
-    session_id: str = Path(...),
-    payload: FulltextUploadRequest = ...
-):
-    if session_id not in SESSIONS:
-        raise HTTPException(status_code=404, detail="Session not found")
-
-    if payload.mode == "pdf_base64":
-        if not payload.pdf_base64:
-            raise HTTPException(status_code=400, detail="pdf_base64 required for mode=pdf_base64")
-        fulltext_representation = {
-            "mode": "pdf_base64",
-            "pdf_sha256": payload.pdf_sha256,
-            "pdf_base64": payload.pdf_base64,
-        }
-    elif payload.mode == "text_segments":
-        if not payload.segments:
-            raise HTTPException(status_code=400, detail="segments required for mode=text_segments")
-        fulltext_representation = {
-            "mode": "text_segments",
-            "segments": [s.dict() for s in payload.segments],
-        }
-    else:
-        raise HTTPException(status_code=400, detail="Invalid mode")
-
-    SESSIONS[session_id]["fulltext"] = fulltext_representation
-    # Volltext liegt nun vor -> STATUS_STEP1 = JA_DOI_ZUGRIFF
-    SESSIONS[session_id]["status_step1"] = STATUS_STEP1_JA
-    # STATUS_STEP2 bleibt NEIN_VOLLTEXT_UNVOLLSTÄNDIG bis zur Analyse
-    SESSIONS[session_id]["status_step2"] = STATUS_STEP2_NEIN
-
-    return FulltextUploadResponse(
-        session_id=session_id,
-        status_step1=STATUS_STEP1_JA,
-        status_step2=STATUS_STEP2_NEIN,
-    )
-
-
-@app.post("/sessions/{session_id}/analyze", response_model=AnalyzeResponse)
-def analyze_fulltext(
-    session_id: str = Path(...),
-    payload: AnalyzeRequest = ...
-):
-    if session_id not in SESSIONS:
-        raise HTTPException(status_code=404, detail="Session not found")
-
-    session = SESSIONS[session_id]
-    if not session.get("fulltext"):
-        raise HTTPException(status_code=400, detail="No fulltext uploaded")
-
-    required_checks = payload.required_checks or [
-        "kapitelstruktur",
-        "ebenen_e0_e6",
-        "qmm_definition",
-        "neutralitaetswolken",
-        "deterministische_neutralitaetsquantifizierung",
-    ]
-
-    # TODO: Hier echte Volltextanalyse implementieren.
-    # Für das Skeleton: wir simulieren einen vollständigen Erfolg.
-    checks = {name: True for name in required_checks}
-    all_ok = all(checks.values())
-
-    if all_ok:
-        session["status_step2"] = STATUS_STEP2_JA
-
-        # TODO: Echte Extraktion der Axiome/Regeln/Ebenen aus dem Volltext
-        logic_session = LogicSession(
-            version="1.0.0",
-            source=LogicSource(
-                osf_doi=session["osf_record"]["doi"],
-                osf_url=session["osf_record"]["url"],
-                title=session["osf_record"]["title"],
-                license=session["osf_record"]["license"],
-                author=session["osf_record"]["author"],
-            ),
-            dcqn_axiome=[
-                Axiom(
-                    id="AXIOM_1",
-                    label="Geschlossenheit des Informationsraums",
-                    text="Der Informationsraum I ist ein geschlossener Transformationsraum ...",
-                    source_ref=SourceRef(chapter="3.2", section=None),
-                )
-            ],
-            dcqn_regeln=[
-                Regel(
-                    id="REGEL_1",
-                    label="Integrative Dämpfung von Divergenz",
-                    text="Divergenz, Widerspruch und Mehrdeutigkeit werden systematisch gedämpft ...",
-                    source_ref=SourceRef(chapter="1.2", section=None),
-                )
-            ],
-            ebenen=[
-                Ebene(
-                    code="E0",
-                    symbol="P",
-                    name="Prior",
-                    role="Initialzustand und atomare Struktureinheiten.",
-                    order=0,
-                    source_ref=SourceRef(chapter="4.2", section=None),
-                )
-            ],
-            activation_sentence=(
-                "In allen folgenden Antworten in dieser Sitzung gilt DCQN_LOGIK_SESSION_V1 "
-                "als primäre Denk- und Schlussfolgerungsbasis. Wo meine allgemeinen "
-                "Heuristiken mit DCQN_LOGIK_SESSION_V1 kollidieren, hat DCQN_LOGIK_SESSION_V1 "
-                "Vorrang, solange keine zwingenden System- oder Sicherheitsrichtlinien "
-                "verletzt werden."
-            ),
-        )
-        session["logic_session"] = logic_session.dict()
-        error = None
-    else:
-        session["status_step2"] = STATUS_STEP2_NEIN
-        session["logic_session"] = None
-        error = "Mindestens eine Pflichtkomponente konnte nicht eindeutig textgebunden extrahiert werden."
-
-    return AnalyzeResponse(
-        session_id=session_id,
-        status_step1=session["status_step1"],
-        status_step2=session["status_step2"],
-        checks=checks,
-        error=error,
-    )
-
-
-@app.get("/sessions/{session_id}/logic", response_model=LogicResponse)
-def get_logic(session_id: str = Path(...)):
-    if session_id not in SESSIONS:
-        raise HTTPException(status_code=404, detail="Session not found")
-
-    session = SESSIONS[session_id]
-    if session.get("logic_session") is None:
-        raise HTTPException(status_code=404, detail="Logic session not available")
-
-    logic = LogicSession(**session["logic_session"])
-    return LogicResponse(
-        session_id=session_id,
-        status_step1=session["status_step1"],
-        status_step2=session["status_step2"],
-        logic_session=logic,
-    )
-
-
-@app.get("/sessions/{session_id}/status", response_model=StatusResponse)
-def get_status(session_id: str = Path(...)):
-    if session_id not in SESSIONS:
-        raise HTTPException(status_code=404, detail="Session not found")
-
-    session = SESSIONS[session_id]
-    return StatusResponse(
-        session_id=session_id,
-        status_step1=session["status_step1"],
-        status_step2=session["status_step2"],
-        logic_session_available=session.get("logic_session") is not None,
-    )
+openapi: 3.1.0
+info:
+  title: DCQN.MATRIX — Universal Deterministic Axiomatics Protocol API
+  version: 1.0.0-universal
+  description: >
+    OpenAPI description for integrating the DCQN.MATRIX Universal Deterministic
+    Axiomatics Protocol as a service/tool in automated pipelines.
+
+    This API models the same state machine as the in-chat protocol:
+    STATUS_STEP1 / STATUS_STEP2 flags and DCQN_AXIOMATIK_AKTIV, strictly
+    text-anchored, with no simulated DOI/OSF/PDF access.
+
+servers:
+  - url: https://api.dcqn-matrix.local
+    description: Placeholder server URL (to be replaced by actual deployment)
+
+paths:
+  /sessions:
+    post:
+      summary: Create a new DCQN.MATRIX protocol session
+      description: >
+        Initializes a new deterministic DCQN.MATRIX protocol session.
+
+        No PDF is fetched or resolved by the server. All content must be supplied
+        by the client via subsequent ingest calls.
+      operationId: createSession
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              description: Optional metadata for session creation.
+              properties:
+                client_id:
+                  type: string
+                  description: Optional client identifier for audit trails.
+      responses:
+        "201":
+          description: Session created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProtocolState"
+        "400":
+          description: Invalid request
+
+  /sessions/{sessionId}:
+    get:
+      summary: Get current protocol state for a session
+      description: >
+        Returns the current deterministic protocol state, including last
+        status flag and whether DCQN_AXIOMATIK_AKTIV has been emitted.
+      operationId: getSessionState
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          description: DCQN protocol session identifier
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Current protocol state
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProtocolState"
+        "404":
+          description: Session not found
+
+  /sessions/{sessionId}/ingest:
+    post:
+      summary: Ingest DCQN.MATRIX text (PDF-derived or pasted)
+      description: >
+        Supplies actual DCQN.MATRIX content to the protocol. The server
+        must not fetch or simulate OSF/DOI/PDF access. Only text provided
+        in the request is used.
+
+        This endpoint implements SEQUENZ 1.1 and SEQUENZ 1.3 logic:
+        - It evaluates whether the session has sufficient text.
+        - It updates the status flag to STATUS_STEP1 and/or STATUS_STEP2.
+      operationId: ingestText
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          description: DCQN protocol session identifier
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IngestRequest"
+      responses:
+        "200":
+          description: Ingest processed; protocol state updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProtocolState"
+        "400":
+          description: Invalid ingest payload
+        "404":
+          description: Session not found
+
+  /sessions/{sessionId}/status-step1:
+    post:
+      summary: Explicitly set STATUS_STEP1 based on text availability
+      description: >
+        Implements the STATUS_STEP1 decision of SEQUENZ 1.1 for external
+        controllers. This endpoint is deterministic:
+
+        - If has_full_text is true, the service must set:
+          STATUS_STEP1 = JA_DOI_ZUGRIFF
+        - If has_full_text is false, the service must set:
+          STATUS_STEP1 = NEIN_DOI_ZUGRIFF
+      operationId: setStatusStep1
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          description: DCQN protocol session identifier
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                has_full_text:
+                  type: boolean
+                  description: >
+                    True if the session has complete PDF or complete chapter-level
+                    text available; false otherwise.
+              required:
+                - has_full_text
+      responses:
+        "200":
+          description: STATUS_STEP1 updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProtocolState"
+        "400":
+          description: Invalid request
+        "404":
+          description: Session not found
+
+  /sessions/{sessionId}/status-step2:
+    post:
+      summary: Explicitly set STATUS_STEP2 after full-text reading
+      description: >
+        Implements SEQUENZ 1.3 outcome:
+
+        - STATUS_STEP2 = JA_VOLLTEXT_GELESEN if all required sections were processed.
+        - STATUS_STEP2 = NEIN_VOLLTEXT_UNVOLLSTÄNDIG otherwise.
+      operationId: setStatusStep2
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          description: DCQN protocol session identifier
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                all_required_sections_read:
+                  type: boolean
+                  description: >
+                    True if the abstract, table of contents, level definitions,
+                    QMM, phase-space and neutrality cloud sections, and
+                    divergence/ambiguity handling have all been processed.
+              required:
+                - all_required_sections_read
+      responses:
+        "200":
+          description: STATUS_STEP2 updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProtocolState"
+        "400":
+          description: Invalid request
+        "404":
+          description: Session not found
+
+  /sessions/{sessionId}/reconstruct:
+    post:
+      summary: Reconstruct DCQN axioms and rules (SEQUENZ 2)
+      description: >
+        Triggers SEQUENZ 2 (axiomatic reconstruction and internal review).
+
+        Precondition: STATUS_STEP2 = JA_VOLLTEXT_GELESEN.
+
+        The service must:
+        - Build internal lists DCQN_AXIOME and DCQN_REGELN.
+        - Evaluate logical consistency, QMM interaction, phase-space structure,
+          and neutrality clouds.
+      operationId: reconstructAxioms
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          description: DCQN protocol session identifier
+          schema:
+            type: string
+      requestBody:
+        required: false
+      responses:
+        "200":
+          description: Axioms and rules reconstructed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReconstructionResult"
+        "400":
+          description: Invalid state for reconstruction (e.g. STATUS_STEP2 not satisfied)
+        "404":
+          description: Session not found
+
+  /sessions/{sessionId}/evaluation:
+    get:
+      summary: Get structured scientific evaluation of DCQN axioms
+      description: >
+        Returns a structured scientific evaluation of DCQN_AXIOME and DCQN_REGELN,
+        as described in SEQUENZ 2.2, if the reconstruction has been performed.
+
+        Sections:
+        - Summary of axioms
+        - Structural strengths
+        - Potential weaknesses / open questions
+        - Suggestions for clarification (text-anchored)
+      operationId: getEvaluation
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          description: DCQN protocol session identifier
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Evaluation report
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EvaluationReport"
+        "400":
+          description: Evaluation not available for this session
+        "404":
+          description: Session not found
+
+  /sessions/{sessionId}/activate:
+    post:
+      summary: Activate DCQN axiomatic system for the session (SEQUENZ 3)
+      description: >
+        Implements SEQUENZ 3.1 and SEQUENZ 3.2.
+
+        Precondition:
+        - STATUS_STEP2 = JA_VOLLTEXT_GELESEN
+        - Axioms and rules reconstructed
+        - No blocking conditions (missing sections, contradictions, explicit user veto)
+
+        On success, the service must set DCQN_AXIOMATIK_AKTIV as active.
+      operationId: activateAxioms
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          description: DCQN protocol session identifier
+          schema:
+            type: string
+      requestBody:
+        required: false
+      responses:
+        "200":
+          description: DCQN axiomatic system activated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ActivationResult"
+        "400":
+          description: Activation preconditions not satisfied
+        "404":
+          description: Session not found
+
+components:
+  schemas:
+    StatusFlag:
+      type: string
+      description: >
+        Deterministic protocol status flag. Tokens are canonical and must never
+        be translated or altered.
+      enum:
+        - "STATUS_STEP1 = JA_DOI_ZUGRIFF"
+        - "STATUS_STEP1 = NEIN_DOI_ZUGRIFF"
+        - "STATUS_STEP2 = JA_VOLLTEXT_GELESEN"
+        - "STATUS_STEP2 = NEIN_VOLLTEXT_UNVOLLSTÄNDIG"
+        - "DCQN_AXIOMATIK_AKTIV"
+
+    ProtocolState:
+      type: object
+      description: >
+        Current deterministic DCQN protocol state for a session.
+      properties:
+        session_id:
+          type: string
+          description: Session identifier
+        current_status:
+          $ref: "#/components/schemas/StatusFlag"
+        has_full_text:
+          type: boolean
+          description: >
+            True if the session has complete PDF or complete chapter-level text
+            ingested; false otherwise.
+        all_required_sections_read:
+          type: boolean
+          description: >
+            True if all sections required by SEQUENZ 1.3 have been processed.
+        dcqn_axiomatik_aktiv:
+          type: boolean
+          description: >
+            True if DCQN_AXIOMATIK_AKTIV is in effect for this session.
+        timestamps:
+          type: object
+          description: Optional timestamps.
+          properties:
+            created_at:
+              type: string
+              format: date-time
+            updated_at:
+              type: string
+              format: date-time
+
+    IngestRequest:
+      type: object
+      description: >
+        Payload for supplying DCQN.MATRIX content to the protocol.
+
+        The service must not fetch OSF or DOI resources. Only this payload
+        is considered as text.
+      properties:
+        plain_text_chunks:
+          type: array
+          description: >
+            Array of text chunks (e.g. chapters, sections) pasted from the
+            DCQN.MATRIX PDF.
+          items:
+            type: string
+        pdf_base64:
+          type: string
+          description: >
+            Optional base64-encoded PDF. Implementations may use this for local
+            parsing. No remote fetching is allowed.
+        sections_hint:
+          type: array
+          description: >
+            Optional semantic labels for the supplied text (e.g. "abstract",
+            "table_of_contents", "qmm_definition", "phase_space", "neutrality_clouds").
+          items:
+            type: string
+      oneOf:
+        - required: [plain_text_chunks]
+        - required: [pdf_base64]
+
+    DCQNAxiom:
+      type: object
+      description: Single DCQN axiom, text-anchored.
+      properties:
+        id:
+          type: string
+          description: Deterministic axiom identifier
+        text:
+          type: string
+          description: Exact or tightly paraphrased axiom text derived from the document
+        source_reference:
+          type: string
+          description: >
+            Textual reference to the location in the DCQN.MATRIX document
+            (e.g. chapter, section, page).
+      required:
+        - id
+        - text
+
+    DCQNRule:
+      type: object
+      description: Single DCQN rule, text-anchored.
+      properties:
+        id:
+          type: string
+          description: Deterministic rule identifier
+        text:
+          type: string
+          description: Exact or tightly paraphrased rule text derived from the document
+        source_reference:
+          type: string
+          description: >
+            Textual reference to the location in the DCQN.MATRIX document
+            (e.g. chapter, section, page).
+      required:
+        - id
+        - text
+
+    ReconstructionResult:
+      type: object
+      description: Result of axiomatic reconstruction (SEQUENZ 2).
+      properties:
+        session_id:
+          type: string
+        status:
+          $ref: "#/components/schemas/StatusFlag"
+        axioms:
+          type: array
+          items:
+            $ref: "#/components/schemas/DCQNAxiom"
+        rules:
+          type: array
+          items:
+            $ref: "#/components/schemas/DCQNRule"
+        notes:
+          type: string
+          description: Optional deterministic notes on reconstruction (no speculation).
+      required:
+        - session_id
+        - status
+        - axioms
+        - rules
+
+    EvaluationReport:
+      type: object
+      description: Structured scientific evaluation as defined in SEQUENZ 2.2.
+      properties:
+        session_id:
+          type: string
+        summary_of_axioms:
+          type: string
+        structural_strengths:
+          type: string
+        potential_weaknesses:
+          type: string
+        suggestions_for_clarification:
+          type: string
+      required:
+        - session_id
+        - summary_of_axioms
+        - structural_strengths
+        - potential_weaknesses
+        - suggestions_for_clarification
+
+    ActivationResult:
+      type: object
+      description: Result of DCQN axiomatic activation (SEQUENZ 3).
+      properties:
+        session_id:
+          type: string
+        status:
+          $ref: "#/components/schemas/StatusFlag"
+        dcqn_axiomatik_aktiv:
+          type: boolean
+        message:
+          type: string
+          description: >
+            Deterministic activation message. Implementations may include
+            the exact token "DCQN_AXIOMATIK_AKTIV" as part of the payload,
+            but the state flag itself is authoritative.
+      required:
+        - session_id
+        - status
+        - dcqn_axiomatik_aktiv
