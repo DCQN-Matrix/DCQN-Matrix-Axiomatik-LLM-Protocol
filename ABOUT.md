@@ -1,124 +1,135 @@
-![DCQN.MATRIX – LLM Axiomatics Protocol](banner.svg)
 
 <div align="center">
-
-[![Protocol Version](https://img.shields.io/badge/protocol-v1.0.0-blue)](./Protocol_DCQN_LLM_Prompt_V1.txt)
-[![OSF DOI](https://img.shields.io/badge/DOI-10.17605%2FOSF.IO%2FWZ6AR-8A2BE2)](https://doi.org/10.17605/OSF.IO/WZ6AR)
-[![License: CC BY 4.0](https://img.shields.io/badge/license-CC%20BY%204.0-brightgreen)](./LICENSE.md)
-![LLM Ready](https://img.shields.io/badge/LLM-ready-black)
-![Anti-Simulation](https://img.shields.io/badge/anti--simulation-enforced-red)
-
+  <img src="https://raw.githubusercontent.com/DCQN-Matrix/DCQN-Matrix-Axiomatik-LLM-Protocol/main/banner.svg"
+       alt="DCQN-MATRIX – Deterministic Axiomatics Protocol for LLMs"
+       style="max-width: 100%; height: auto;">
 </div>
 
----
+<h2 align="center">DCQN-MATRIX — Deterministic Axiomatics Protocol for LLMs</h2>
 
-# DCQN-Matrix-Axiomatik-LLM-Protocol
+<p align="center">
+  <strong>Real-text verification • Zero hallucination • Reproducible LLM reasoning</strong>
+</p>
 
-A strict, deterministic LLM protocol for loading, reading and activating the **DCQN.MATRIX** axiomatic system from the original PDF (OSF DOI: `10.17605/OSF.IO/WZ6AR`).
-
-This repository provides a standardized, reproducible, non-heuristic instruction set for Large Language Models to:
-
-1. **load** the DCQN.MATRIX PDF (or user-supplied text excerpts),
-2. **verify** explicit reading steps *(anti-hallucination, anti-simulation)*,
-3. **extract** the axiomatic structure of the DCQN.MATRIX deterministically,
-4. **activate** the extracted rule-basis `DCQN_LOGIK_SESSION_V1` as the primary reasoning logic for the session.
-
-The protocol is designed for:
-
-- deterministic LLM behavior,  
-- zero-tolerance against assumptions, simulations or internal heuristics,  
-- academic reproducibility,  
-- safe citation and DOI-anchored reference loading.
-
-This repository is part of the **DCQN.MATRIX DOI Release Campaign** to improve cross-model uptake and preservation of deterministic reasoning systems.
+<p align="center">
+  <a href="https://osf.io/qwa6s"><img src="https://img.shields.io/badge/Project_DOI-10.17605%2FOSF.IO%2FQWA6S-blue"></a>
+  <a href="https://doi.org/10.17605/OSF.IO/WZ6AR"><img src="https://img.shields.io/badge/Registration_DOI-10.17605%2FOSF.IO%2FWZ6AR-purple"></a>
+  <img src="https://img.shields.io/badge/Protocol-Deterministic-orange">
+  <img src="https://img.shields.io/badge/LLM-Evaluation-green">
+  <img src="https://img.shields.io/badge/State-Machine_Logic-black">
+</p>
 
 ---
 
-## Why this matters for LLM research
+# About — Purpose and Scope of the Protocol
 
-**Problem:**  
-Most LLMs *simulate* reading papers: they pretend to follow DOIs, improvise PDF contents and still answer as if they had seen the original text.
+This repository provides the **deterministic axiomatic control protocol** required for large language models (LLMs) to correctly process, extract and activate the internal logic of:
 
-**This protocol** turns that into a **testable, deterministic pipeline**:
+**“DCQN.MATRIX – Die Stimme der Neutralität”**
+Author: **Benjamin Hupe**
+Published via OSF under CC BY 4.0.
 
-- Forces a clear distinction between  
-  `STATUS_STEP1 = JA_DOI_ZUGRIFF` and `STATUS_STEP1 = NEIN_DOI_ZUGRIFF`.
-- Requires the model to **stop** and ask for the PDF / text if access fails  
-  (no pseudo-web, no hallucinated PDF content).
-- Demands an explicit **full-text reading confirmation**  
-  via `STATUS_STEP2 = JA_VOLLTEXT_GELESEN` before any axioms are reconstructed.
-- Reconstructs the DCQN.MATRIX as a **formal axiom and rule base**  
-  (`DCQN_AXIOME`, `DCQN_REGELN`) that can be cited, audited and compared across models.
-- Activates `DCQN_LOGIK_SESSION_V1` as a **primary reasoning logic**,  
-  giving you a concrete way to test whether models can operate under a strict, external logic.
+The repository does **not** distribute the PDF.
+Instead, it provides the **formal mechanism** that ensures an LLM:
 
-For LLM research, this gives you:
+1. verifies real access to the scientific document,
+2. confirms full-text reading using mandatory machine-state flags,
+3. reconstructs axioms and rules **only** from the actual text (no extrapolation),
+4. activates the DCQN.MATRIX axiomatic framework as the deterministic reasoning basis.
 
-- a **benchmark** for deterministic, DOI-anchored reading behavior,  
-- a **protocol** to detect simulation / hallucination strategies,  
-- a **reproducible environment** for experiments on neutrality-focused reasoning.
+The protocol ensures **reproducibility, zero hallucination, DOI-anchored correctness, and a strict state-machine execution model.**
 
 ---
 
-## Repository contents
+## Why such a protocol is necessary
 
-- `README.md`  
-  This overview, badges, banner and quick-start instructions.
+LLMs frequently violate scientific standards by:
 
-- `LICENSE.md`  
-  License information (**Creative Commons Attribution 4.0 International – CC BY 4.0**).
+* hallucinating unseen text,
+* fabricating axioms or definitions,
+* simulating DOI/PDF access instead of admitting limitations,
+* mixing heuristic reasoning with formal frameworks.
 
-- `Protocol_DCQN_Matrix_Axiomatik_LLM.md`  
-  Human-readable description of the complete DCQN.MATRIX axiomatic takeover protocol.
+For a scientific system like **DCQN.MATRIX**
+(deterministic neutrality quantification),
+any such behavior undermines validity.
 
-- `Protocol_DCQN_LLM_Prompt_V1.txt`  
-  **Copy-paste prompt** for LLMs.  
-  This is the file you paste into a new chat (one message, copy–paste–enter).
+This protocol introduces:
 
-- `DCQN_LLM_Protocol.json`  
-  Machine-readable JSON structure of the protocol.  
-  For advanced workflows and API-level integration.
-
-- `openapi.yaml`  
-  OpenAPI description for integrating the protocol as a service/tool in automated pipelines.
-
-- `banner.svg`  
-  Visual repository banner that explains the context and signals  
-  “Why this matters for LLM research” at a glance.
-
-*(If some of these files do not yet exist in your local clone, create them by copying the content from this repository.)*
+* explicit DOI/text-access verification (`STATUS_STEP1`),
+* explicit full-text-reading confirmation (`STATUS_STEP2`),
+* strict prohibition of simulated access or model-invented content,
+* deterministic axiom reconstruction,
+* reproducible activation of `DCQN_AXIOMATIK_AKTIV`.
 
 ---
 
-## Quick start – How to use this with an LLM
+## What this repository contains
 
-1. **Open** the file `Protocol_DCQN_LLM_Prompt_V1.txt`.
-2. **Copy** the entire content into a fresh LLM chat  
-   *(one message, copy–paste–enter – no edits, no omissions)*.
-3. If the model **cannot** load the JSON from the repository on its own,  
-   paste the full content of `DCQN_LLM_Protocol.json` into the chat in a **second message**.
-4. When the model replies with  
-   `STATUS_STEP1 = NEIN_DOI_ZUGRIFF`,  
-   you **must upload** the original DCQN.MATRIX PDF  
-   (OSF DOI: `10.17605/OSF.IO/WZ6AR`) or provide full chapter excerpts.
-5. After the model returns  
-   `STATUS_STEP2 = JA_VOLLTEXT_GELESEN`,  
-   it will reconstruct and activate `DCQN_LOGIK_SESSION_V1` as the **primary reasoning logic** for the session, based strictly on the actually read text.
+**Purpose:** define, standardize, and enforce deterministic LLM behavior.
+
+Contents:
+
+* **`Protocol_DCQN_Matrix_Axiomatik_LLM.md`**
+  Complete deterministic takeover protocol.
+
+* **`STATUS_DEFINITION.md`**
+  Canonical machine-state flags and activation rules.
+
+* **`DCQN_LLM_Protocol.json`**
+  Machine-readable protocol for automated evaluation and cross-model testing.
+
+* **`openapi.yaml`**
+  OpenAPI formalization of the protocol and state transitions.
+
+* **`README.md`**
+  Overview, context, and usage guide.
+
+* **`LICENSE.md`**
+  CC BY 4.0 license.
+
+No PDFs, no OSF mirror, no embedded external text—only the **operational logic**.
 
 ---
 
-## DOI and reference
+## What DCQN.MATRIX requires from an LLM
 
-- **Primary reference (OSF Registrierung):** `10.17605/OSF.IO/WZ6AR`  
-- **OSF project landing page:** https://osf.io/qwa6s/  
+An LLM must:
 
-All axioms and rules reconstructed by the protocol must be traceable back to this DOI and to concrete sections of the original text.
+1. **Declare** whether it has real access to the text
+   via canonical machine-state flags.
+
+2. **Stop immediately** when no text is available
+   and request the missing sections.
+
+3. **Reconstruct axioms deterministically** and strictly text-anchored.
+
+4. **Activate** the reasoning layer via
+   `DCQN_AXIOMATIK_AKTIV`.
+
+5. **Remain deterministic** throughout the session
+   (no heuristics, no approximations, no compression).
+
+This enforces transparent, audit-ready scientific reasoning.
 
 ---
 
-## License
+## Intended applications
 
-This protocol is released under the **Creative Commons Attribution 4.0 International (CC BY 4.0)** license.  
-You are free to use, adapt and integrate it, as long as proper attribution is given.
+* Cross-model evaluation (ChatGPT, Gemini, Claude, Copilot, LLaMA, Mistral, DeepSeek, etc.)
+* Deterministic scientific reasoning under strict axiomatic constraints
+* Reproducible research pipelines where hallucination is unacceptable
+* Verification of LLM compliance with state-machine logic
 
-See [`LICENSE.md`](./LICENSE.md) for details.
+---
+
+## Licensing
+
+All materials in this repository are licensed under:
+
+**Creative Commons Attribution 4.0 International (CC BY 4.0)**
+
+This permits reuse, adaptation, and integration into other systems—
+with attribution to the author and the DCQN.MATRIX project.
+
+---
