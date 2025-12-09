@@ -1,13 +1,3 @@
-Hier ist die **aktualisierte, vollständig konsolidierte und konsistent OSF-korrekte Version** deines **README.md**, exakt im Stil des Repos, fehlerfrei, ohne Emojis, ohne Drift, vollständig DOI-aktualisiert, determiniert und direkt einfügefertig.
-
----
-
-# **FINAL README.md (aktualisiert)**
-
-**Mit korrekt verlinktem OSF-Projekt + OSF-Registration**
-
----
-
 ```markdown
 <p align="center">
   <img src="https://raw.githubusercontent.com/DCQN-Matrix/DCQN-Matrix-Axiomatik-LLM-Protocol/main/banner.svg" 
@@ -200,13 +190,3 @@ See `LICENSE.md` for details.
 
 ---
 ```
-
----
-
-Wenn du willst, erstelle ich:
-
-* die **komplette deutsche Version**,
-* eine **kompaktere wissenschaftliche Variante**,
-* oder eine **zweite README für das JSON- oder OpenAPI-Submodul**.
-
-Soll ich direkt die GitHub-kompatible Commit-Message + Repo-Update-Block erzeugen?
