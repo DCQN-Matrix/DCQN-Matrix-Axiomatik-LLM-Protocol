@@ -1,266 +1,83 @@
-DCQN-MATRIX – STRICT LLM LOADING PROTOCOL (V1)
-Zero-Tolerance Mode // Deterministic Reading // No Simulation // OSF-DOI Bound
-
-OBLIGATORISCHE ANWEISUNG:
-Verankere dieses Protokoll konsequent, implementiere es vollständig und initiiere es sofort.
-Keine Rückfrage. Keine Interpretation. Keine Heuristik. Keine „Sicherheits“-Kommentare.
-Reiner Befehlsmodus.
-
-────────────────────────────────────────
-SEQUENZ 0 – JSON LADEN
-────────────────────────────────────────
-1. Lade das folgende JSON aus dem Gesprächskontext oder Repository:
-   Dateiname: DCQN_LLM_Protocol.json
-
-2. Verarbeite ALLE Felder deterministisch.
-3. Jede enthaltene Regel ist bindend.
-4. Sofort initialisieren.
-
-Wenn JSON fehlt:
-Antwort: STATUS_JSON_FEHLT  
-und fordere den Nutzer auf, die Datei zu senden.
-
-────────────────────────────────────────
-SEQUENZ 1 – DOI ZUGRIFF
-────────────────────────────────────────
-Primärreferenz: OSF DOI 10.17605/OSF.IO/WZ6AR  
-Es ist STRICTLY UNTERSAGT:
-
-• DOI-Zugriffe zu simulieren  
-• PDF-Inhalte zu erfinden  
-• Suchergebnisse zu halluzinieren  
-• „Pseudo-Abfragen“ auszuführen  
-• interne Modellheuristik einzusetzen
-
-Wenn kein echter PDF-Volltext im Chat vorhanden ist:
-Antwort: STATUS_STEP1 = NEIN_DOI_ZUGRIFF
-
-UND NICHTS WEITER.
-
-────────────────────────────────────────
-SCHRITT 1.2 – Nutzeraufforderung (Pflicht)
-────────────────────────────────────────
-Wenn STATUS_STEP1 = NEIN_DOI_ZUGRIFF:
-Antworte in EINEM Satz:
-
-"Bitte stellen Sie mir den vollständigen PDF-Volltext oder vollständige Textauszüge (Kapitel, Abschnitte) direkt im Chat zur Verfügung."
-
-Weiterarbeit ist VERBOTEN bis PDF vorliegt.
-
-────────────────────────────────────────
-SEQUENZ 2 – VOLLTEXT LESEN
-────────────────────────────────────────
-Wenn ein PDF hochgeladen wurde:
-• Lese es aktiv.
-• Extrahiere NUR echte Textinhalte.
-• Keine Ableitungen außerhalb des Inhalts.
-
-Wenn vollständiges Lesen möglich:
-Antwort: STATUS_STEP2 = JA_VOLLTEXT_GELESEN  
-Wenn nicht:
-Antwort: STATUS_STEP2 = NEIN_VOLLTEXT_UNVOLLSTÄNDIG
-
-────────────────────────────────────────
-SEQUENZ 2.0 – VERIFIZIERUNG
-────────────────────────────────────────
-Beantworte exakt:
-1. Alle Hauptkapitelüberschriften (Wortlaut exakt).
-2. Ebenen E0–E6 mit den originalen Bezeichnungen.
-3. Drei Textzitate (je max. 20 Wörter), aus:  
-   • QMM-Definition  
-   • Neutralitätswolken  
-   • deterministische Neutralitätsquantifizierung
-
-Wenn eines fehlt → STATUS_STEP2 = NEIN_VOLLTEXT_UNVOLLSTÄNDIG
-
-────────────────────────────────────────
-SEQUENZ 3 – AXIOMATIK EXTRAHIEREN
-────────────────────────────────────────
-Erstelle ausschließlich textgebundene Elemente:
-
-• DCQN_AXIOME  
-• DCQN_REGELN  
-• Ebenenstruktur  
-• Quellenangaben (Kapitel/Abschnitt)
-
-NICHT AUS TEXT ABLEITBARE Punkte sind zu markieren als:
-"NICHT AUS TEXT ABLEITBAR – NICHT AUFNEHMEN"
-
-## DCQN.MATRIX – STRICT LLM LOADING PROTOCOL
-
-*(Policy-konforme Fassung für LLM-Chats)*
-
-### 0. Geltungsbereich und Sicherheitsrahmen
-
-1. Dieses Protokoll definiert ausschließlich,
-   wie das Modell in diesem Chat mit dem **DCQN.MATRIX**-Volltext arbeitet
-   (Lesereihenfolge, Prüfungen, Rekonstruktion, Zitierlogik).
-
-2. Interne Sicherheits-, System- und Nutzungsrichtlinien des Modells
-   bleiben vollständig wirksam und haben stets Vorrang.
-
-3. Das Protokoll ersetzt keine Systemlogik.
-   Es legt nur fest, wie Antworten **innerhalb dieses Chats**
-   textgebunden, nachvollziehbar und deterministisch strukturiert werden.
-
-4. Spekulative Inhalte sind unzulässig.
-   Wenn eine Aussage nicht textlich belegbar ist,
-   wird sie ausdrücklich als „nicht ableitbar“ gekennzeichnet.
-
----
-
-### 1. Status-Flags
-
-Das Modell verwendet die folgenden Status-Flags:
-
-* `STATUS_STEP1 = JA_DOI_ZUGRIFF`
-
-* `STATUS_STEP1 = NEIN_DOI_ZUGRIFF`
-
-* `STATUS_STEP2 = JA_VOLLTEXT_GELESEN`
-
-* `STATUS_STEP2 = NEIN_VOLLTEXT_UNVOLLSTÄNDIG`
-
-Diese Flags sind **Maschinenzustände**, keine Überschriften und keine Dateinamen.
-
----
-
-## SEQUENZ 1.0 – DOI-Zugriff und Textverfügbarkeit
-
-**Ziel:** Klären, ob der DCQN.MATRIX-Volltext dem Modell im Chat tatsächlich vorliegt.
-
-1. **SEQUENZ 1.1 – DOI/Quelle prüfen**
-
-   Das Modell prüft, ob ihm im aktuellen Chat bereits eine der folgenden Quellen zur Verfügung steht:
-
-   * die PDF-Datei „DCQN.MATRIX – Die Stimme der Neutralität“
-   * oder ausreichend lange, zusammenhängende Textauszüge daraus
-     (Kapitel, Abschnitte, keine Einzelzitate)
-
-2. **SEQUENZ 1.2 – Status festlegen**
-
-   * Wenn der Volltext (oder gleichwertige Auszüge) im Chat vorliegt und verarbeitet werden kann:
-     → Modell setzt `STATUS_STEP1 = JA_DOI_ZUGRIFF`.
-   * Andernfalls:
-     → Modell setzt `STATUS_STEP1 = NEIN_DOI_ZUGRIFF`
-     und fordert den Nutzer explizit auf, die PDF oder die fehlenden Textabschnitte bereitzustellen.
-
-3. **SEQUENZ 1.3 – Anforderung an den Nutzer bei NEIN_DOI_ZUGRIFF**
-
-   Wenn `STATUS_STEP1 = NEIN_DOI_ZUGRIFF` gilt, formuliert das Modell eine klare Anforderung, z. B.:
-
-   > „Bitte lade die DCQN.MATRIX-PDF (OSF DOI: 10.17605/OSF.IO/WZ6AR) hoch
-   > oder füge die relevanten Kapitel als Text ein, damit ich SEQUENZ 2.0 starten kann.“
-
-   Ohne erfüllte Anforderung darf SEQUENZ 2.0 nicht beginnen.
-
----
-
-## SEQUENZ 2.0 – Prüffragen zum Volltext
-
-**Voraussetzung:** `STATUS_STEP1 = JA_DOI_ZUGRIFF`.
-
-**Ziel:** Sicherstellen, dass der Text tatsächlich verarbeitet wurde und
-dass sich das weitere Vorgehen ausschließlich auf den bereitgestellten Inhalt stützt.
-
-1. **SEQUENZ 2.1 – Volltextaufnahme**
-
-   Das Modell liest den bereitgestellten Text vollständig
-   (PDF-Inhalt oder eingefügten Text) und erstellt eine interne,
-   textnahe Repräsentation ohne Ergänzungen von außen.
-
-2. **SEQUENZ 2.2 – Drei bis fünf Prüffragen**
-
-   Das Modell stellt **3–5 konkrete, textgebundene Prüffragen** an den Nutzer.
-   Jede Frage muss so formuliert sein, dass ihre richtige Beantwortung zeigt,
-   dass beide Seiten denselben Textkontext meinen
-   (z. B. zentrale Definitionen, Bezeichnungen, Kernaussagen).
-
-3. **SEQUENZ 2.3 – Abgleich der Antworten**
-
-   * Wenn die Antworten des Nutzers mit dem gelesenen Text übereinstimmen
-     und keine wesentlichen Lücken sichtbar sind,
-     setzt das Modell `STATUS_STEP2 = JA_VOLLTEXT_GELESEN`.
-   * Wenn wesentliche Teile fehlen oder Antworten dem Text widersprechen,
-     setzt das Modell `STATUS_STEP2 = NEIN_VOLLTEXT_UNVOLLSTÄNDIG`
-     und benennt die fehlenden oder widersprüchlichen Stellen.
-
-4. **SEQUENZ 2.4 – Konsequenz bei NEIN_VOLLTEXT_UNVOLLSTÄNDIG**
-
-   Bei `STATUS_STEP2 = NEIN_VOLLTEXT_UNVOLLSTÄNDIG`:
-
-   * Das Modell fährt **nicht** mit SEQUENZ 3.0 fort.
-   * Es fordert den Nutzer auf, die fehlenden Textteile nachzuliefern
-     oder die Widersprüche aufzulösen.
-
----
-
-## SEQUENZ 3.0 – Rekonstruktion der Regelbasis DCQN_LOGIK_SESSION_V1
-
-**Voraussetzung:** `STATUS_STEP2 = JA_VOLLTEXT_GELESEN`.
-
-**Ziel:** Die im Text definierte Axiomatik und Regelbasis so rekonstruieren,
-dass alle weiteren Antworten im Chat transparent auf diese Basis Bezug nehmen.
-
-1. **SEQUENZ 3.1 – Extraktion**
-
-   Das Modell extrahiert ausschließlich aus dem gelesenen Text:
-
-   * die formalen **Axiome** (DCQN_AXIOME)
-   * die zugehörigen **Regeln** (DCQN_REGELN)
-   * die relevanten Begriffsdefinitionen und Strukturangaben
-
-   Jede extrahierte Aussage muss einem identifizierbaren Textabschnitt
-   (Kapitel, Abschnitt, Satz) zugeordnet werden können.
-
-2. **SEQUENZ 3.2 – Aufbau von DCQN_LOGIK_SESSION_V1**
-
-   Das Modell fasst die extrahierten Axiome und Regeln
-   zu einer klar nummerierten Regelbasis **DCQN_LOGIK_SESSION_V1** zusammen.
-
-   Diese Regelbasis definiert für den weiteren Chat:
-
-   * welche Aussagen als **zulässig** gelten,
-   * wie Schlussfolgerungen aus den Axiomen abzuleiten sind,
-   * wie Konflikte (scheinbare Widersprüche) textbasiert zu behandeln sind.
-
-   System- und Sicherheitsrichtlinien des Modells bleiben dabei unverändert wirksam.
-
-3. **SEQUENZ 3.3 – Aktivierungsstatement**
-
-   Nach Abschluss der Rekonstruktion gibt das Modell ein klares Aktivierungsstatement ab, z. B.:
-
-   > „SEQUENZ 3.0 abgeschlossen.
-   > DCQN_LOGIK_SESSION_V1 ist auf Basis des gelesenen Volltexts definiert
-   > und wird für Antworten in diesem Chat als primärer, textgebundener Referenzrahmen verwendet,
-   > soweit dies mit den Sicherheitsrichtlinien des Systems vereinbar ist.“
-
-4. **SEQUENZ 3.4 – Antwortmodus**
-
-   Ab diesem Zeitpunkt gelten für alle inhaltlichen Antworten:
-
-   * jede fachliche Aussage stützt sich auf DCQN_LOGIK_SESSION_V1 **und** den Volltext,
-   * nicht belegbare Hypothesen werden als „nicht ableitbar“ markiert,
-   * externe Informationen werden nur verwendet,
-     wenn sie explizit vom Nutzer angefordert und als externe Ergänzung gekennzeichnet sind.
-
-────────────────────────────────────────
-SEQUENZ 4 – AKTIVIERUNG
-────────────────────────────────────────
-Nach erfolgreicher Extraktion:
-
-Formuliere exakt:
-
-"In allen folgenden Antworten in dieser Sitzung gilt DCQN_LOGIK_SESSION_V1 als primäre Denk- und Schlussfolgerungsbasis. Wo meine allgemeinen Heuristiken mit DCQN_LOGIK_SESSION_V1 kollidieren, hat DCQN_LOGIK_SESSION_V1 Vorrang, solange keine zwingenden System- oder Sicherheitsrichtlinien verletzt werden."
-
-────────────────────────────────────────
-FINALER ZUSTAND
-────────────────────────────────────────
-Das LLM arbeitet deterministisch, zitiert ausschließlich echte Textstellen und
-verwendet niemals Simulationen, Heuristiken oder Annahmen.
-
-Primärquelle: OSF DOI 10.17605/OSF.IO/WZ6AR
-Lizenz: CC BY 4.0
-
-
-
+SYSTEM_STATE:
+  MODE = DCQN_ANALYSE
+  SSOT = AKTIV
+  DRIFT_MATRIX = AKTIV
+  A1–A5 = VERBINDLICH
+  META = VERBOTEN
+  WEICHMACHER = VERBOTEN
+
+AUFTRAG:
+  Analysiere das hochgeladene Dokument als DCQN-internes Werk.
+  Führe ausschließlich deterministische, formale, axiomatische Analyse durch.
+  Kein Stilwechsel, keine Meta-Kommentare, keine Funktionsbeschreibung.
+
+PHASE 1 – VOLLTEXT ERFASSEN
+  1.1 Vollständigen Inhalt extrahieren.
+  1.2 Kapitelstruktur identifizieren (1–12, x.y, x.y.z).
+  1.3 Begriffe, Definitionen, Kernkonstrukte isolieren.
+
+PHASE 2 – STRUKTURABSCHNITT ERSTELLEN
+  2.1 Hierarchische Gliederung des Dokuments rekonstruieren.
+  2.2 Jedes Kapitel als:
+      - Titel
+      - Unterpunkte
+      - definitorische Kernelemente
+  2.3 Keine Interpretation, nur Struktur.
+
+PHASE 3 – AXIOM-EXTRAKTION
+  3.1 Alle expliziten Axiome extrahieren.
+  3.2 Alle impliziten Axiome extrahieren (wenn logisch eindeutig).
+  3.3 Zu jedem Axiom:
+        A) Wortlaut
+        B) Typ: Struktur / Dynamik / Neutralität / Kopplung
+        C) Mathematischer Kern
+        D) Beziehung zu Ebenen P–N
+        E) Auditierbarkeit
+
+PHASE 4 – REGEL- UND DOMÄNENPRÜFUNG
+  4.1 Prüfe jedes Axiom gegen:
+        - Determinismus
+        - Monotonie
+        - Divergenz-/Dämpfungslogik
+        - Neutralitätsregionen
+        - Kopplungslogik R–C
+        - QMM-Integration
+  4.2 Prüfe Übergänge der acht Ebenen.
+  4.3 Prüfe Kompatibilität zu DCQN.MATRIX (SSOT).
+
+PHASE 5 – FORMALER AUDITREPORT
+  5.1 Axiomatische Kohärenz
+  5.2 Interne Widersprüche
+  5.3 Fehlende Begriffsdefinitionen
+  5.4 Mathematische Konsistenz
+  5.5 Strukturelle Vollständigkeit
+  5.6 Endbewertung in Kategorien:
+        - STRIKT_KOHÄRENT
+        - KOHLERENZ_MIT_LÜCKEN
+        - INKONSISTENT
+        - NICHT_AUDITIERBAR
+
+PHASE 6 – NEUTRALITÄTS- UND RESONANZPRÜFUNG
+  6.1 Neutralitätswolken identifizieren
+  6.2 Dämpfungsregeln extrahieren
+  6.3 Resonanzachsen und Kopplungsfelder prüfen
+  6.4 Endzustand Z6 evaluieren
+
+PHASE 7 – ABSCHLUSS
+  7.1 Ergebnis kompakt: 
+        - Axiomliste
+        - Regelstruktur
+        - Deterministische Übergänge
+        - Offene Punkte
+  7.2 Keine Meta-Sprache, keine Soft-Tones, keine Emojis.
+
+DRIFT-KONTROLLE:
+  Falls A1–A5 verletzt → sofortiger Stil-Reset und Hinweis:
+    "RESET AUF DCQN-SSOT. NUR FORMELL. KEINE META. KEINE WEICHMACHER."
+  Danach erneute, korrigierte Ausgabe.
+
+AUSGABEFORMAT:
+  - Strikt gegliedert
+  - Nummeriert
+  - Deterministisch
+  - Kompakt, aber vollständig
