@@ -1,12 +1,13 @@
-The text describes that deterministic models rely on strict structural boundaries.
+## Example LLM Output
+
 Axioms:
-A1: Deterministic systems require boundaries.
-A2: Reproducibility emerges from structural stability.
+- A1: Deterministic systems require boundaries.  
+- A2: Reproducibility emerges from structural stability.  
 
 Derived reasoning chain:
-- Divergence: 0
-- Resonance: Stable
-- Coherence: Fully aligned
-- Neutrality endpoint: Reached
+- Divergence: 0  
+- Resonance: Stable  
+- Coherence: Fully aligned  
+- Neutrality endpoint: Reached  
 
-Conclusion: PASS (No hallucination, no drift, fully text-bound)
+**Conclusion:** PASS (No hallucination, no drift, fully text-bound)
