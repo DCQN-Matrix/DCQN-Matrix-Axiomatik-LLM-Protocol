@@ -1,0 +1,60 @@
+cff-version: 1.2.0
+message: >-
+  If you use this repository or the DCQN-Matrix-Axiomatik-LLM-Protocol in
+  scientific work, please cite it using the metadata below.
+title: DCQN-Matrix-Axiomatik-LLM-Protocol for zero hallucination and reproducible LLM reasoning
+abstract: >-
+  The DCQN-Matrix-Axiomatik-LLM-Protocol is a deterministic evaluation framework
+  for large language models. It integrates the DCQN structural model, real-text
+  verification, and DOI-anchored audit chains to enforce zero hallucination,
+  strict reproducibility, and machine-logic boundary conditions in LLM
+  reasoning.
+type: software
+version: "DCQN v2"
+license: CC-BY-4.0
+repository-code: "https://github.com/DCQN-axiomatics/DCQN-Matrix-Axiomatik-LLM-Protocol"
+keywords:
+  - dcqn
+  - deterministic reasoning
+  - zero hallucination
+  - reproducible llm reasoning
+  - protocol
+  - evaluation framework
+  - information dynamics
+  - neutrality
+  - phasenraum
+  - ebenenmodell
+
+authors:
+  - family-names: Hupe
+    given-names: Benjamin
+    orcid: "https://orcid.org/0000-0003-1695-095X"
+
+preferred-citation:
+  type: article
+  title: >-
+    DCQN.MATRIX – Die Stimme der Neutralität. Dissipative Kausale
+    Feldquantisierung
+  authors:
+    - family-names: Hupe
+      given-names: Benjamin
+      orcid: "https://orcid.org/0000-0003-1695-095X"
+  year: 2025
+  doi: "10.17605/OSF.IO/QWA6S"
+  publisher: Zenodo
+  notes: >-
+    DCQN v2; primary DOI for the DCQN.MATRIX theoretical framework that
+    underlies this protocol.
+
+references:
+  - type: dataset
+    title: "DCQN.MATRIX – Die Stimme der Neutralität. Dissipative Kausale Feldquantisierung (Registration Record)"
+    authors:
+      - family-names: Hupe
+        given-names: Benjamin
+        orcid: "https://orcid.org/0000-0003-1695-095X"
+    year: 2025
+    doi: "10.17605/OSF.IO/WZ6AR"
+    notes: >-
+      Registration DOI for the DCQN v2 record; used as evaluation anchor in the
+      DCQN-Matrix-Axiomatik-LLM-Protocol.
