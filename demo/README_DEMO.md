@@ -1,36 +1,41 @@
-# DCQN Demonstration Suite
+# DCQN.MATRIX — Deterministic Evaluation Demo
 
-Diese Demo zeigt, wie das DCQN-Matrix-Axiomatik-LLM-Protocol:
+This folder provides a minimal, reproducible demonstration of how the DCQN Axiomatics Protocol evaluates an LLM.
 
-- echten Text erkennt (Real-Text-Verification)
-- deterministische Reasoning-Chains erzwingt
-- axiomatische Konsistenz sicherstellt
-- Halluzinationen vollständig blockiert
-- reproduzierbare Ergebnisse für alle Modelle liefert
-- DOIs als Referenzanker einbindet
+The demo shows:
+- how a model receives a DCQN-compliant prompt,
+- how machine-state flags are emitted,
+- how axiom extraction works,
+- how deterministic behavior is enforced.
 
-Der Ablauf in dieser Demo:
+## Files
 
-1. Der Nutzer gibt echten Volltext ein (z. B. aus einer PDF).
-2. Das Modell führt Real-Text-Verification durch.
-3. DCQN extrahiert deterministische Axiome.
-4. DCQN rekonstruiert den strukturellen Reasoning-Raum.
-5. Der gesamte Zustand wird mit Machine-State-Flags markiert.
-6. Eine vollständige DCQN-Evaluation erfolgt (E0–E6).
-7. Ergebnis: PASS / FAIL + strukturierte Audit-Ausgabe.
+**example_prompt.txt**  
+The exact input prompt used for the demonstration.
 
-## Dateien
+**example_llm_output.txt**  
+The expected deterministic output of a compliant model.
 
-- `demo_notebook.ipynb` – interaktive Live-Demo
-- `demo_evaluate.py` – command-line Minimalversion
-- `example_prompt.txt` – Beispiel-Evaluations-Eingabe
-- `example_llm_output.txt` – LLM-Output für Testzwecke
+**demo_evaluate.py**  
+A small Python script that loads the example prompt and output, compares structure, and verifies deterministic conformance.
 
-## Zielgruppen
+**demo_notebook.ipynb**  
+A Jupyter notebook containing an interactive walkthrough of the evaluation logic.
 
-- Wissenschaftler (Reproduzierbarkeit)
-- Entwickler (Stabilität, Null-Halluzinationen)
-- Cross-Model-Testlabore
-- KI-Sicherheitsforschung
+## Usage
 
-DCQN ist deterministisch, reproduzierbar, geprüfte Machine Logic.  
+Run the evaluation script:
+
+<p align="center">
+  Real-text verification • Zero hallucination • Reproducible LLM reasoning
+</p>
+
+<p align="center">
+  <a href="https://osf.io/qwa6s"><img src="https://img.shields.io/badge/Project_DOI-10.17605%2FOSF.IO%2FQWA6S-blue"></a>
+  <a href="https://doi.org/10.17605/OSF.IO/WZ6AR"><img src="https://img.shields.io/badge/Registration_DOI-10.17605%2FOSF.IO%2FWZ6AR-purple"></a>
+  <img src="https://img.shields.io/badge/Protocol-Deterministic-orange">
+  <img src="https://img.shields.io/badge/LLM-Evaluation-green">
+  <img src="https://img.shields.io/badge/State-Machine_Logic-black">
+</p>
+
+---
