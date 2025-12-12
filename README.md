@@ -4,7 +4,7 @@
        width="100%">
 </p>
 
-<h2 align="center">DCQN-MATRIX — Deterministic Axiomatics Protocol for LLMs</h2>
+<h2 align="center">DCQN.MATRIX - Deterministic Axiomatics Protocol for LLMs</h2>
 
 <p align="center">
   Real-text verification • Zero hallucination • Reproducible LLM reasoning
@@ -19,51 +19,95 @@
 </p>
 
 ---
+# **DCQN.Matrix - LLM Protocol**
 
-# DCQN.MATRIX – LLM Axiomatic Protocol (OSF Reference)
+## Introduction
 
-This repository defines a deterministic, reproducible, DOI-anchored protocol enabling LLMs to:
+This repository defines a protocol for the **controlled integration of probabilistic large language models (LLMs)** into a system architecture that adheres to the DCQN Matrix axiomatic framework.
 
-1. verify access to the PDF  
-2. read required scientific sections  
-3. reconstruct axioms and rules  
-4. activate the axiomatic system as the session’s primary logic layer  
+The purpose of this project is to establish a **clear, technically sound interface** between LLMs and deterministic logic layers. It is designed to guide how LLMs should be used where appropriate and **not used where determinism, neutrality, or stability guarantees are required**.
 
-The protocol prevents:
+## Motivation
 
-- simulated DOI access  
-- hallucinated PDF content  
-- heuristic or interpolated inference  
-- uncontrolled reasoning drift  
+Large language models are inherently probabilistic. Directly relying on them for critical decision-making, neutral evaluation, or stable prioritization introduces risk of inconsistency and unintended generation artifacts. This protocol therefore limits the role of LLMs to **well-defined, non-decisional tasks**.
 
----
+## Scope and Role
 
-## Repository structure
+### Purpose
 
-- Protocol_DCQN_Matrix_Axiomatik_LLM.md  
-- STATUS_DEFINITION.md  
-- DCQN_LLM_Protocol.json  
-- openapi.yaml  
-- LICENSE.md  
-- README.md  
+The DCQN LLM Protocol outlines how an LLM can be used:
 
----
+* to **extract structured information** from context,
+* and to **formulate language** for output based on externally approved content.
 
-## Workflow
+### Permitted LLM Roles
 
-1. User downloads PDF from https://osf.io/qwa6s  
-2. User opens a fresh LLM chat  
-3. User pastes the protocol  
-4. Model emits `STATUS_STEP1`  
-5. User uploads PDF if needed  
-6. Model reads text → emits `STATUS_STEP2`  
-7. Model reconstructs axioms  
-8. Model activates → `DCQN_AXIOMATIK_AKTIV`  
+Within this protocol, an LLM may be used for:
 
-This ensures deterministic, fully auditable scientific reasoning.
+* **READER** reading and interpreting provided content,
+* **EXTRACTOR** structured extraction of information,
+* **FORMULATOR** language generation for content already approved or authorized by deterministic processes.
 
----
+LLMs **must not** be used for:
+
+* making decisions that affect system outcomes,
+* operational prioritization,
+* stability assessments,
+* neutrality evaluations.
+
+Those responsibilities are explicitly assigned to **external, deterministic modules**.
+
+## Architecture Overview
+
+This protocol assumes the following high-level architecture:
+
+1. **Deterministic Core**
+   External modules responsible for stability, neutrality, decision logic, and priority handling.
+
+2. **LLM Integration Layer**
+   A controlled interface where LLMs can receive input and return structured, context-bounded language outputs.
+
+3. **Gate Mechanisms**
+   Policy and validation gates that ensure outputs are permissible before passing results downstream.
+
+## Principles
+
+* **Determinism First:** All system-relevant decisions must be resolved outside the LLM.
+* **Role Isolation:** An LLM’s function is limited to text handling within a bounded context.
+* **Non-decisional LLM Usage:** The protocol explicitly prevents LLM outputs from triggering system state changes.
+* **Auditability:** All LLM interactions must be loggable and reviewable without ambiguity.
+
+## Use Cases
+
+The DCQN LLM Protocol is suitable for:
+
+* Extracting structured data from unstructured inputs,
+* Generating descriptive text from verified templates,
+* Translating or formatting content where logical approval is external.
+
+It is **not** suitable for:
+
+* autonomous reasoning,
+* moral or policy judgments,
+* stable state determination.
+
+## Compliance and Integration
+
+To integrate within a DCQN-compliant system:
+
+1. Wrap LLM calls with appropriate input sanitization.
+2. Apply deterministic gates before and after LLM invocation.
+3. Disallow LLM involvement in core decision flows.
+
+## Contributing
+
+Contributions are welcome but must adhere strictly to the protocol’s boundaries:
+
+* No modification that enables LLM decision authority.
+* All changes must preserve auditability and determinism.
+* Documentation must reflect the role constraints precisely.
 
 ## License
 
-Creative Commons Attribution 4.0 International (CC BY 4.0)
+This project is open source and may be used under the terms specified in the accompanying LICENSE file.
+
