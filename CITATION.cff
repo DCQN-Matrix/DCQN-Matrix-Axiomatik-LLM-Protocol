@@ -16,9 +16,9 @@ repository-code: "https://github.com/DCQN-axiomatics/DCQN-Matrix-Axiomatik-LLM-P
 keywords:
   - dcqn
   - deterministic reasoning
-  - zero hallucination
+  - anti hallucination
   - reproducible llm reasoning
-  - protocol
+  - LLM-protocol
   - evaluation framework
   - information dynamics
   - neutrality
