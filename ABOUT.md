@@ -7,7 +7,7 @@
 <h2 align="center">DCQN-MATRIX — Deterministic Axiomatics Protocol for LLMs</h2>
 
 <p align="center">
-  <strong>Real-text verification • Zero hallucination • Reproducible LLM reasoning</strong>
+  <strong>Real-text verification • anti-hallucination enforcement • Reproducible LLM reasoning</strong>
 </p>
 
 <p align="center">
